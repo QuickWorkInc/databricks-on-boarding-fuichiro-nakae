@@ -50,6 +50,12 @@ resource "databricks_job" "main" {
       }
     }
 
+    library {
+      pypi {
+        package = "nest-asyncio"
+      }
+    }
+
     new_cluster {
       spark_version = "15.4.x-scala2.12"
       node_type_id  = "i3.xlarge"

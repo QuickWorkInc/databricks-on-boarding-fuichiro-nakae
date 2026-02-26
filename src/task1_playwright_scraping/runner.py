@@ -2,7 +2,11 @@
 
 # COMMAND ----------
 
-import asyncio
+import nest_asyncio
+
+nest_asyncio.apply()
+
+# COMMAND ----------
 
 from playwright.async_api import async_playwright
 
@@ -31,4 +35,4 @@ async def main() -> None:
 
 # COMMAND ----------
 
-asyncio.get_event_loop().run_until_complete(main())
+await main()
