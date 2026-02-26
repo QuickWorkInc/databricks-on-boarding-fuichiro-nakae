@@ -2,6 +2,18 @@
 
 # COMMAND ----------
 
+import subprocess
+
+# Playwrightブラウザをインストール
+print("Installing Playwright browsers...")
+result = subprocess.run(["playwright", "install", "chromium"], capture_output=True, text=True)
+print(result.stdout)
+if result.returncode != 0:
+    print(result.stderr)
+print("Playwright browsers installed.")
+
+# COMMAND ----------
+
 import nest_asyncio
 
 nest_asyncio.apply()
