@@ -2,7 +2,9 @@
 
 # COMMAND ----------
 
-from playwright.sync_api import sync_playwright
+import asyncio
+
+from playwright.async_api import async_playwright
 
 # COMMAND ----------
 
@@ -12,21 +14,21 @@ env = dbutils.widgets.get("env")
 # COMMAND ----------
 
 
-def main() -> None:
+async def main() -> None:
     """Playwrightを使用してWebスクレイピングを実行する"""
     print(f"Environment: {env}")
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page()
-        page.goto("https://example.com")
-        title = page.title()
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        page = await browser.new_page()
+        await page.goto("https://example.com")
+        title = await page.title()
         print(f"Page title: {title}")
-        browser.close()
+        await browser.close()
 
     print("Playwright scraping completed successfully.")
 
 
 # COMMAND ----------
 
-main()
+asyncio.get_event_loop().run_until_complete(main())
