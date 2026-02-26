@@ -1,0 +1,84 @@
+version: '3'
+
+tasks:
+  # フォーマット
+  fmt:
+    desc: コードを自動フォーマット
+    cmds:
+      - uv run ruff format ./src ./tests
+      - terraform -chdir=terraform fmt -recursive
+
+  fmt-check:
+    desc: フォーマットをチェック
+    cmds:
+      - uv run ruff format --check ./src ./tests
+      - terraform -chdir=terraform fmt -check -recursive
+
+  # Lint + 型チェック
+  check:
+    desc: コード品質チェック
+    cmds:
+      - uv run ruff check ./src ./tests
+      - uv run mypy src/
+
+  # テスト
+  test:
+    desc: カバレッジ付きテスト
+    cmds:
+      - uv run pytest tests/ -v --cov=src --cov-report=term-missing
+
+  # Terraformテスト
+  terraform-test:
+    desc: Terraform構文チェック
+    cmds:
+      - task: terraform-fmt-check
+      - task: terraform-validate-dev
+      - task: terraform-validate-stg
+
+  terraform-fmt-check:
+    desc: Terraformフォーマットチェック
+    cmds:
+      - terraform -chdir=terraform fmt -check -recursive
+
+  terraform-validate-dev:
+    desc: dev環境の構文チェック
+    dir: terraform/envs/dev
+    cmds:
+      - terraform init -backend=false
+      - terraform validate
+
+  terraform-validate-stg:
+    desc: stg環境の構文チェック
+    dir: terraform/envs/stg
+    cmds:
+      - terraform init -backend=false
+      - terraform validate
+
+  # デプロイ
+  terraform-plan-dev:
+    desc: dev環境のplan確認
+    dir: terraform/envs/dev
+    cmds:
+      - terraform init
+      - terraform plan
+
+  terraform-apply-dev:
+    desc: dev環境にデプロイ
+    dir: terraform/envs/dev
+    cmds:
+      - terraform init
+      - terraform apply
+
+  terraform-plan-stg:
+    desc: stg環境のplan確認
+    dir: terraform/envs/stg
+    cmds:
+      - terraform init
+      - terraform plan
+
+  terraform-apply-stg:
+    desc: stg環境にデプロイ
+    dir: terraform/envs/stg
+    cmds:
+      - terraform init
+      - terraform apply
