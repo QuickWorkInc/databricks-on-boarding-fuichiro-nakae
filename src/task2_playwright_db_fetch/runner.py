@@ -6,22 +6,14 @@ import subprocess
 
 # Playwrightのシステム依存関係をインストール
 print("Installing Playwright system dependencies...")
-result = subprocess.run(
-    ["playwright", "install-deps", "chromium"],
-    capture_output=True,
-    text=True
-)
+result = subprocess.run(["playwright", "install-deps", "chromium"], capture_output=True, text=True)
 print(result.stdout)
 if result.returncode != 0:
     print(f"install-deps stderr: {result.stderr}")
 
 # Playwrightブラウザをインストール
 print("Installing Playwright browsers...")
-result = subprocess.run(
-    ["playwright", "install", "chromium"],
-    capture_output=True,
-    text=True
-)
+result = subprocess.run(["playwright", "install", "chromium"], capture_output=True, text=True)
 print(result.stdout)
 if result.returncode != 0:
     print(f"install stderr: {result.stderr}")
