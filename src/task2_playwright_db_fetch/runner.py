@@ -45,30 +45,21 @@ env = dbutils.widgets.get("env")
 # COMMAND ----------
 
 
-async def scrape_salesnow() -> None:
-    """Playwrightを使用してsalesnow.jpから情報を収集する"""
+async def scrape_example() -> None:
+    """Playwrightを使用してexample.comから情報を収集する"""
     print("=== Playwright Scraping ===")
 
     async with async_playwright() as p:
         browser = await p.chromium.launch()
+        page = await browser.new_page()
 
-        # User-Agentを設定
-        context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        )
-        page = await context.new_page()
-
-        await page.goto("https://salesnow.jp/")
+        await page.goto("https://example.com/")
         title = await page.title()
         print(f"Page title: {title}")
 
-        # ページの説明文を取得
-        description_locator = page.locator('meta[name="description"]')
-        if await description_locator.count() > 0:
-            description = await description_locator.get_attribute("content")
-            print(f"Description: {description}")
-        else:
-            print("Description: (meta description not found)")
+        # ページの本文を取得
+        body_text = await page.locator("p").first.text_content()
+        print(f"Body text: {body_text}")
 
         await browser.close()
 
@@ -100,7 +91,7 @@ def fetch_db_records() -> None:
 # COMMAND ----------
 
 # Playwrightでスクレイピング
-await scrape_salesnow()
+await scrape_example()
 
 # COMMAND ----------
 
