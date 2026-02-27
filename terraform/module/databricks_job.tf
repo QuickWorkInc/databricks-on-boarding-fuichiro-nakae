@@ -89,9 +89,10 @@ resource "databricks_job" "main" {
     }
 
     new_cluster {
-      spark_version = "15.4.x-scala2.12"
-      node_type_id  = "i3.xlarge"
-      num_workers   = 0
+      spark_version      = "15.4.x-scala2.12"
+      node_type_id       = "i3.xlarge"
+      num_workers        = 0
+      data_security_mode = "SINGLE_USER"
 
       spark_conf = {
         "spark.databricks.cluster.profile" = "singleNode"
