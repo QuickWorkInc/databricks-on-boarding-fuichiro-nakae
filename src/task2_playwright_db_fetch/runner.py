@@ -51,14 +51,24 @@ async def scrape_salesnow() -> None:
 
     async with async_playwright() as p:
         browser = await p.chromium.launch()
-        page = await browser.new_page()
+
+        # User-Agentを設定
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
+        page = await context.new_page()
+
         await page.goto("https://salesnow.jp/")
         title = await page.title()
         print(f"Page title: {title}")
 
         # ページの説明文を取得
-        description = await page.locator('meta[name="description"]').get_attribute("content")
-        print(f"Description: {description}")
+        description_locator = page.locator('meta[name="description"]')
+        if await description_locator.count() > 0:
+            description = await description_locator.get_attribute("content")
+            print(f"Description: {description}")
+        else:
+            print("Description: (meta description not found)")
 
         await browser.close()
 
