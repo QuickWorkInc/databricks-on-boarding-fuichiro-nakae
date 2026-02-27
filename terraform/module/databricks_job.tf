@@ -38,7 +38,7 @@ resource "databricks_job" "main" {
     task_key = "serverless_data_fetch"
 
     notebook_task {
-      notebook_path = "src/task1_playwright_scraping/runner"
+      notebook_path = "src/task1_serverless_data_fetch/runner"
       source        = "GIT"
       base_parameters = {
         env = var.env
@@ -58,7 +58,7 @@ resource "databricks_job" "main" {
     }
 
     notebook_task {
-      notebook_path = "src/task2_db_fetch/runner"
+      notebook_path = "src/task2_playwright_db_fetch/runner"
       source        = "GIT"
       base_parameters = {
         env = var.env
