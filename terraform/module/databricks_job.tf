@@ -32,12 +32,33 @@ resource "databricks_job" "main" {
     branch   = var.git_source_branch
   }
 
-  # Task 1: Playwright Scraping (Provisioned)
+  # Task 1: Intent Data Fetch (Serverless)
+  # 目的: サーバーレスでの構築を体験する
   task {
-    task_key = "playwright_scraping"
+    task_key = "serverless_data_fetch"
 
     notebook_task {
       notebook_path = "src/task1_playwright_scraping/runner"
+      source        = "GIT"
+      base_parameters = {
+        env = var.env
+      }
+    }
+
+    # サーバーレス: new_cluster なし、library なし
+  }
+
+  # Task 2: Playwright + DB Fetch (Provisioned)
+  # 目的: ライブラリの追加やDB操作を体験する
+  task {
+    task_key = "playwright_db_fetch"
+
+    depends_on {
+      task_key = "serverless_data_fetch"
+    }
+
+    notebook_task {
+      notebook_path = "src/task2_db_fetch/runner"
       source        = "GIT"
       base_parameters = {
         env = var.env
@@ -53,38 +74,6 @@ resource "databricks_job" "main" {
     library {
       pypi {
         package = "nest-asyncio"
-      }
-    }
-
-    new_cluster {
-      spark_version = "15.4.x-scala2.12"
-      node_type_id  = "i3.xlarge"
-      num_workers   = 0
-
-      spark_conf = {
-        "spark.databricks.cluster.profile" = "singleNode"
-        "spark.master"                     = "local[*]"
-      }
-
-      custom_tags = {
-        "ResourceClass" = "SingleNode"
-      }
-    }
-  }
-
-  # Task 2: DB Fetch (Provisioned/Classic)
-  task {
-    task_key = "db_fetch"
-
-    depends_on {
-      task_key = "playwright_scraping"
-    }
-
-    notebook_task {
-      notebook_path = "src/task2_db_fetch/runner"
-      source        = "GIT"
-      base_parameters = {
-        env = var.env
       }
     }
 
